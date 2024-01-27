@@ -16,7 +16,7 @@ from selenium.webdriver.common.keys import Keys
 class Browser:
     def __init__(self):
         chrome_options = ChromiumOptions()
-        chrome_options.add_argument("--headless=new")
+        #chrome_options.add_argument("--headless=new")
 
         service = Service(ChromeDriverManager().install())
         # service.creation_flags = CREATE_NO_WINDOW
@@ -41,7 +41,7 @@ class Browser:
             return True
         except:
             WebDriverWait(self.driver, 30).until(EC.presence_of_element_located(
-                (By.CLASS_NAME, "alert alert-block alert-dismissible alert-danger messages error")))
+                (By.CLASS_NAME, "alert-danger")))
             return False
 
     def get_API(self):
@@ -94,27 +94,21 @@ class Browser:
         self.driver.find_element(By.ID, 'edit-submit').click()
 
 
-def main(arg1: str, arg2: str, arg3: str):
+def main(arg1: str, arg2: str):
+    """if arg3 == None:
+        arg3 == """
     browser = Browser()
     is_logged = browser.log_in(arg1, arg2)
 
     if is_logged:
         while True:
             API_KEY = browser.get_API()
-            if result != "Failed":
+            if API_KEY != "Failed":
                 break
     else:
         return "Could not log in! The account might not exist or the network is unstable."
 
-    import time
-    time.sleep(60)
-
-    if arg3 == "key_request":
-        return API_KEY
-    elif arg3 == "weather_request":
-        pass
-
 
 if __name__ == "__main__":
-    result = main(sys.argv[1], sys.argv[2], sys.argv[3])
+    result = main(sys.argv[1], sys.argv[2])
     print(result)

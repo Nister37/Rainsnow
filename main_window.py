@@ -6,14 +6,13 @@ import os
 import PySimpleGUI as sg
 
 def inform_about_coords(coords: str):
-    decoded_result = coords.decode('utf-8')
+    decoded_result = coords
     result_string = ""
     for char in decoded_result:
         if char.isalpha() or char == ',' or char == ' ':
             result_string += char
 
     result_array = result_string.split(',')
-
     if result_array[0] != "Success":
         sg.popup_ok(f"We could not find any results with given data!")
     else:
@@ -137,31 +136,43 @@ while True:
         if is_city_visible:
             approved, city, county = get_check_input_data()
             if approved:
-                result = subprocess.check_output(
-                    [sys.executable, "check_coords.py", "--set-city", f"{city}",
-                     f"{county}"])
+                completed_process = subprocess.run(
+                    [sys.executable, "check_coords.py", "--set-city", f"{city}", f"{county}"],
+                    capture_output=True,
+                    text=True  # This specifies that the output should be in text (string) mode
+                )
 
         else:
             approved, latitude, longitude = get_check_input_data()
             if approved:
-                result = subprocess.check_output(
-                    [sys.executable, "check_coords.py", "--set-coords", f"{city}",
-                     f"{county}"])
+                completed_process = subprocess.run(
+                    [sys.executable, "check_coords.py", "--set-coords", f"{latitude}", f"{longitude}"],
+                    capture_output=True,
+                    text=True  # This specifies that the output should be in text (string) mode
+                )
 
     elif event == "-FIND-":
         if is_city_visible:
             approved, city, county = get_check_input_data()
             if approved:
-                result = subprocess.check_output([sys.executable, "check_coords.py","--check-city" ,f"{city}",
-                                                     f"{county}"])
-                inform_about_coords(result)
+                completed_process = subprocess.run(
+                    [sys.executable, "check_coords.py", "--check-city", f"{city}", f"{county}"],
+                        capture_output=True,
+                        text=True  # This specifies that the output should be in text (string) mode
+                )
+                result_str = completed_process.stdout.strip()
+                inform_about_coords(result_str)
 
         else:
             approved, latitude, longitude = get_check_input_data()
             if approved:
-                result = subprocess.check_output([sys.executable, "check_coords.py", "--check-coords", f"{latitude}",
-                                                  f"{longitude}"])
-                inform_about_coords(result)
+                completed_process = subprocess.run(
+                    [sys.executable, "check_coords.py", "--check-coords", f"{latitude}", f"{longitude}"],
+                    capture_output=True,
+                    text=True  # This specifies that the output should be in text (string) mode
+                )
+                result_str = completed_process.stdout.strip()
+                inform_about_coords(result_str)
 
     elif event == "-LOG-OUT-":
         confirm = sg.popup_yes_no("Are you sure you want to log out?")
