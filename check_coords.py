@@ -37,6 +37,7 @@ class GeoInfo:
                                           f"{longitude}"])
 
 
+
 def main(arg1: str, arg2: str, arg3=""):
     global result
     geo_info = GeoInfo()
