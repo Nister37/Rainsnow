@@ -2,6 +2,7 @@ import sys
 import subprocess
 from geopy.geocoders import Nominatim
 
+import control_files as cf
 
 class GeoInfo:
     def __init__(self):
@@ -27,8 +28,11 @@ class GeoInfo:
             return "Success", city, state, country
         else:
             return "Error. The latitude and longitude should be in range from -90 to 90"
-
-    def set_coordinates(self, latitude: float, longitude: float):
+    def save_coordinates(self, latitude: float, longitude: float):
+        cf.DataHandler.write_localization(latitude,longitude)
+        """check_data = cf.DataHandler.read_localization()
+        print(check_data)"""
+    def launch_coordinates(self, latitude: float, longitude: float):
         result = subprocess.check_output([sys.executable, "get_info.py", "--supervise", f"{latitude}",
                                           f"{longitude}"])
 
@@ -54,7 +58,7 @@ def main(arg1: str, arg2: str, arg3=""):
         if coords[0] == "Success":
             result = geo_info.check_coordinates(coords[1], coords[2])
             if result[0] == "Success":
-                geo_info.set_coordinates(coords[1], coords[2])
+                geo_info.save_coordinates(coords[1], coords[2])
         else:
             return result[0]
 
@@ -63,7 +67,7 @@ def main(arg1: str, arg2: str, arg3=""):
         arg3 = float(arg3)
         coords = geo_info.check_coordinates(arg2, arg3)
         if coords[0] == "Success":
-            geo_info.set_coordinates(arg2, arg3)
+            geo_info.save_coordinates(arg2, arg3)
 
     return result
 

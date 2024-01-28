@@ -1,7 +1,8 @@
 import requests
 import os
 import datetime
-import pickle
+
+import control_files as cf
 
 from winotify import Notification
 from winotify import audio
@@ -78,14 +79,14 @@ def send_request(latitude: float, longitude: float, api_key: str):
 def control_notifications():
     global first_time_launch, last_notification_time
     if first_time_launch:
-        read_time()
+        cf.read_time()
 
         first_time_launch = False
         last_notification_time = datetime.datetime.now()-datetime.timedelta(minutes=50)
 
     if last_notification_time+datetime.timedelta(seconds=10) < datetime.datetime.now():
         last_notification_time = datetime.datetime.now()
-        save_time(last_notification_time)
+        cf.save_time(last_notification_time)
 
         server_response = send_request(LATITUDE,LONGITUDE,API_KEY)
         message, weather_type, fall_type, phrase, url = receive_data(server_response.json())
@@ -100,37 +101,10 @@ def control_notifications():
     else:
         pass
 
-def read_time():
-    with open('data\\time.pkl', 'rb') as file:
-        data = pickle.load(file)
-        return data
-
-def save_time(time_to_save):
-    with open('data\\time.pkl', 'wb') as file:
-        pickle.dump(time_to_save, file)
-
-def read_status():
-    with open('data\\status.pkl.pkl', 'rb') as file:
-        data = pickle.load(file)
-        return data
-
-def write_status(status_to_save):
-    with open('data\\status.pkl', 'wb') as file:
-        pickle.dump(status_to_save, file)
-
-def read_uses():
-    with open('data\\uses.pkl', 'rb') as file:
-        data = pickle.load(file)
-        return data
-
-def write_uses(uses_to_save):
-    with open('data\\uses.pkl', 'wb') as file:
-        pickle.dump(uses_to_save, file)
-
 """arg1: float, arg2: float, arg3: str"""
 def main():
-    save_time(datetime.datetime.now())
-    print(read_time())
+    cf.save_time(datetime.datetime.now())
+    print(cf.read_time())
     while True:
         control_notifications()
         sleep(3)
